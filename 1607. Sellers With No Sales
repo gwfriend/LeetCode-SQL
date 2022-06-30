@@ -1,0 +1,8 @@
+with cte as (
+    select distinct seller_id as id
+        from Orders
+        where year(sale_date) = '2020'
+)
+select seller_name 
+      from Seller
+      where seller_id not in (select cte.id from cte)

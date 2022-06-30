@@ -1,0 +1,7 @@
+     select * from ( select employee_id from Employees 
+    union
+    select employee_id from Salaries) as temp
+       where temp.employee_id not in (    
+        select  a.employee_id as id
+             from Employees a join Salaries b
+               on a.employee_id = b.employee_id)

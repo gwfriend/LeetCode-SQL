@@ -1,0 +1,14 @@
+with cte as(
+    select avg(num) as av, count(num) as ct
+    from MyNumbers
+    group by num
+    order by ct asc, av desc
+    offset 0 row
+    fetch first 1 row only
+    )
+    
+select  case when (select cte.ct from cte) > 1 then null
+        else (select cte.av from cte)
+        end as num
+            
+   

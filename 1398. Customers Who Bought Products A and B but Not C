@@ -19,5 +19,22 @@ with cte as(
 select c.customer_id as customer_id, c.customer_name as customer_name 
     from Customers c join cte3
         on c.customer_id = cte3.id3
+        
+        
+     option 2
+     
+   with cte as(
+    select customer_id as id, 
+    string_agg(product_name,'') within group(order by product_name asc) as pn
+    from Orders
+    group by customer_id),
     
+    cte1 as(
+        select c.id as id
+    from cte c
+    where (c.pn like 'AB%') and (c.pn not like 'ABC%'))
+    
+select c.customer_id as customer_id, c.customer_name as customer_name 
+    from Customers c join cte1
+        on c.customer_id = cte1.id 
     

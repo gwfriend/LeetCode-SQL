@@ -1,0 +1,23 @@
+with cte as(
+    select customer_id, product_name
+        from Orders
+        where customer_id not in (select customer_id from Orders where product_name like 'C')),
+    
+    cte1 as(
+        select customer_id as id1, product_name as pn1
+        from cte
+        where cte.product_name like'A' 
+        ),
+     cte2 as(
+        select customer_id as id2, product_name as pn2
+        from cte
+        where cte.product_name like'B' 
+        ),  
+   cte3 as(select cte1.id1 as id3
+        from cte1 join cte2
+            on cte1.id1 = cte2.id2)
+select c.customer_id as customer_id, c.customer_name as customer_name 
+    from Customers c join cte3
+        on c.customer_id = cte3.id3
+    
+    

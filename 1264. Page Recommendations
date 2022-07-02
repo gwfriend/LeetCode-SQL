@@ -1,0 +1,14 @@
+with cte as(
+    select user2_id as id from Friendship where user1_id = 1
+union
+select user1_id as id from Friendship where user2_id = 1
+    )
+    
+    select distinct page_id as recommended_page
+        from Likes
+        where user_id in (select cte.id from cte)
+    except
+    select page_id as recommended_page
+        from Likes
+        where user_id = 1
+    

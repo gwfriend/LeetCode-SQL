@@ -1,0 +1,7 @@
+with cte as(select student_id, course_id, grade,row_number()over
+                                                                (partition by student_id order by grade desc) as gd
+    from Enrollments)
+    
+select cte.student_id as student_id, cte.course_id as course_id, cte.grade as grade
+    from cte
+    where cte.gd  = 1

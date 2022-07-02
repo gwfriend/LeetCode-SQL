@@ -1,0 +1,13 @@
+with cte as(
+    select dept_id as id, count(student_id) as num
+    from Student
+    group by dept_id
+    )
+select d.dept_name,
+        case when c.num is null then 0
+        else c.num 
+        end as student_number
+    from Department d left join cte c
+        on d.dept_id = c.id
+    
+    

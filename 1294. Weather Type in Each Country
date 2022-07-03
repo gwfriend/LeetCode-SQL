@@ -1,0 +1,16 @@
+with cte as(
+    select country_id as id, avg(weather_state) as w
+        from Weather
+    where day between '2019-11-01' and '2019-11-30'
+    group by country_id
+)
+select c.country_name as country_name, 
+    case
+        when b.w < =15 then 'Cold'
+        when b.w >=25 then 'Hot'
+        else 'Warm'
+        end as weather_type 
+    from cte b join Countries c
+        on b.id = c.country_id
+ 
+ 

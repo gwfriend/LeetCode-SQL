@@ -1,0 +1,16 @@
+with cte as(
+    select caller_id as id, duration
+        from calls
+    union all
+    select callee_id as id, duration
+        from calls
+),
+    cte2 as(
+    select count(*) as num, sum(c.duration) as sm,left(p.phone_number,3) as pn
+        from cte c join Person p
+        on c.id = p.id
+        group by left(p.phone_number,3))
+select c.name
+    from cte2 c2 join Country ct
+        on c2.pn = ct.country_code
+        group by 

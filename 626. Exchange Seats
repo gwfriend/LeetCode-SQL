@@ -1,0 +1,11 @@
+select id-1 as id, student
+    from Seat
+    where id%2 = 0
+union
+select id+1 as id, student 
+    from Seat
+    where id%2 <> 0 and id <> (select max(id) from Seat)
+union
+select id, student
+    from Seat
+    where id = (select max(id) from Seat)

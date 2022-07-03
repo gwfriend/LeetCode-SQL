@@ -1,0 +1,24 @@
+with cte as(
+    select product_id as id, new_price as np, change_date as cd
+    from Products
+    where change_date <= '2019-08-16'
+    ),
+   cte1 as(
+   select cte.id as id, cte.np as np, cte.cd as cd, row_number()over
+       (partition by cte.id order by cte.cd desc) as rnk
+        from cte
+   ),
+   cte2 as(
+       select distinct product_id as id from Products
+   ),
+   cte3 as(select cte1.id as id,cte1.np as np
+    from cte1         
+    where cte1.rnk = 1)
+select c2.id as product_id,
+            case when c3.np is null then 10
+            else c3.np
+            end
+            as price
+     from cte2 c2 left join cte3 c3
+        on c2.id = c3.id
+        

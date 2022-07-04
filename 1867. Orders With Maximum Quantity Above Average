@@ -1,0 +1,9 @@
+with cte as(
+    select order_id, avg(quantity) as av
+        from OrdersDetails
+        group by order_id
+    )
+select distinct o.order_id as order_id
+    from OrdersDetails o left join cte c
+        on o.order_id = c.order_id
+   where o.quantity > (select max(cte.av) from cte)

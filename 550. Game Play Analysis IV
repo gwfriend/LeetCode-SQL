@@ -1,0 +1,19 @@
+with cte as(
+    select player_id as id, event_date as dt, row_number() over(partition by player_id order by  event_date) as rnk
+    from Activity),
+    
+    cte1 as(
+    select cte.id as idf, dateadd(day,1,cte.dt) as dtf
+        from cte 
+        where cte.rnk = 1),
+    
+    
+  
+  cte2 as(
+      select player_id as id
+      from Activity
+      where exists 
+      (select 1 from activity where player_id in(select cte1.idf from cte1) and event_date in (select cte1.dtf from cte1)))
+      
+         select round(100*cast((select count(cte2.id) from cte2) as decimal)/
+   (select count(*) from Activity group by player_id),2)    

@@ -1,0 +1,7 @@
+with cte as(
+    select product_id, order_id,order_date, dense_rank()over(partition by product_id order by order_date desc) as rnk from Orders)
+select p.product_name, c.product_id, c.order_id, c.order_date
+   from cte c join Products p
+        on c.product_id = p.product_id
+       where c.rnk = 1
+     

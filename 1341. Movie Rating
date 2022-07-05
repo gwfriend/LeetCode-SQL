@@ -1,27 +1,25 @@
-with cte as(
-    select count(movie_id) as mid, user_id as id
-     from MovieRating 
-     group by user_id
-     ),
+with 
     cte1 as(
-    select avg(rating) as av, movie_id as mid
- from MovieRating 
- where created_at between '2020-02-01' and '2020-02-28'
- group by movie_id)
-
-select u.name as results
-    from cte c join Users u
-        on c.id = u.user_id
-    order by c.mid desc, u.name asc
-    offset 0 rows
-    fetch first 1 row only
-union 
-select m.title as results
-    from cte1 c1 join Movies m
-        on c1.mid = m.movie_id
-    order by c1.av,m.title
-    offset 1 rows
-    fetch first 1 row only
-
-
- 
+        select u.name as results
+        from MovieRating m join Users u
+            on m.user_id = u.user_id
+        group by u.name
+        order by count(m.movie_id) desc,u.name asc
+        offset 0 rows
+        fetch first 1 row only
+    ),
+    cte2 as(
+    select mv.title as results
+        from MovieRating mr join Movies mv
+            on mr.movie_id = mv.movie_id
+        where mr.created_at between '2020-02-01' and '2020-02-28'
+        group by mv.title
+        order by avg(mr.rating*1.0) desc,mv.title
+        offset 0 rows
+        fetch first 1 row only
+)
+    
+select * from cte1
+union
+select * from cte2
+        

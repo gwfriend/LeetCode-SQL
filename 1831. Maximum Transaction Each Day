@@ -1,0 +1,8 @@
+with cte as(
+    select convert(varchar(10),day ,120) as day, amount,rank() over(partition by convert(varchar(10),day ,120) order by amount desc) as rnk, transaction_id  from Transactions
+)
+
+select cte.transaction_id as transaction_id
+    from cte
+    where rnk = 1
+    order by transaction_id

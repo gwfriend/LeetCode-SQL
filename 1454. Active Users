@@ -1,0 +1,2 @@
+select id, datediff(day, login_date, (select min(login_date) from Logins))
+    from Logins

@@ -1,0 +1,13 @@
+with cte as(
+    select min(customer_id) as min, max(customer_id) as max
+        from Customers
+  ),
+    ctes(ids) as(
+    select cte.min from cte
+        union all
+    select ids+1 from ctes where ids < (select cte.max from cte)
+    )
+select * from  ctes 
+except
+select customer_id as ids
+    from Customers    

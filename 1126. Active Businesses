@@ -1,0 +1,14 @@
+with cte as(
+    select event_type as type, avg(occurences) as avg
+        from Events
+        group by event_type
+)
+select business_id 
+    from Events
+    group by business_id 
+    having count(business_id)>1
+intersect
+select business_id
+    from Events e left join cte c
+    on e.event_type = c.type
+    where e.occurences > c.avg

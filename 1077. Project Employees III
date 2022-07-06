@@ -1,0 +1,11 @@
+with cte as(
+    select p.project_id as pid, p.employee_id as eid, e.experience_years as y
+        from Project p join Employee e 
+        on p.employee_id = e.employee_id
+),
+    cte1 as(
+    select pid,eid,rank()over(partition by pid order by y desc) as rnk
+    from cte)
+select pid as project_id, eid as employee_id
+    from cte1
+    where rnk = 1

@@ -1,0 +1,20 @@
+with cte as(
+    select employee_id as id
+    from Employees 
+    where manager_id = 1 and employee_id <> 1
+    ),
+    cte1 as(
+   select employee_id  as id
+    from Employees
+    where manager_id in (select cte.id from cte)
+    ),
+     cte2 as(
+         select employee_id  as id
+    from Employees
+    where manager_id in (select cte1.id from cte1))
+    
+    select cte.id as employee_id from cte
+    union 
+    select cte1.id as employee_id from cte1
+    union
+    select cte2.id as employee_id from cte2

@@ -18,3 +18,19 @@ with cte as(
     select cte1.id as employee_id from cte1
     union
     select cte2.id as employee_id from cte2
+    
+    
+    solution 2 
+    
+    with cte as(
+    select employee_id, 1 as level 
+        from Employees
+    where manager_id = 1 and employee_id <>1
+union all
+select e.employee_id as employee_id, level + 1
+    from Employees e join cte c
+        on e.manager_id = c.employee_id
+    where level < 3
+    )
+select employee_id from cte
+   

@@ -1,0 +1,13 @@
+with cte as(
+    select num, id, row_number()over(partition by num order by id asc) as rnk
+    from Logs
+    ),
+    cte1 as(
+        select num, id-rnk as rnk
+            from cte
+    )
+select num ConsecutiveNums 
+    from cte1
+    group by num, rnk
+    having count(rnk) = 3
+   

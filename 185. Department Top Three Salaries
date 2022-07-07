@@ -1,0 +1,12 @@
+with cte as(
+    select departmentId, name, salary, dense_rank()over(partition by departmentId order by salary desc) rank
+    from Employee
+    ),
+   getTop3 as(select name, salary,departmentId
+        from cte
+        where rank>= 1 and rank <=3
+        )
+ select d.name as Department, g.name as Employee, g.salary as Salary
+    from getTop3 g join Department d
+        on g.departmentId = d.id
+        

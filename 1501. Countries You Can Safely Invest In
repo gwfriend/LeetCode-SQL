@@ -1,16 +1,24 @@
-with cte as(
-    select caller_id as id, duration
-        from calls
-    union all
-    select callee_id as id, duration
-        from calls
-),
-    cte2 as(
-    select count(*) as num, sum(c.duration) as sm,left(p.phone_number,3) as pn
-        from cte c join Person p
-        on c.id = p.id
-        group by left(p.phone_number,3))
-select c.name
-    from cte2 c2 join Country ct
-        on c2.pn = ct.country_code
-        group by 
+with getCountryCode as(
+    select id, left(phone_number,3) as code from Person
+    ),
+    getCallDuration as(
+    select gcc.code as countrycode, c.duration as duration        
+        from Calls c join getCountryCode gcc
+            on c.caller_id = gcc.id
+        
+        union all
+        
+    select gcc.code as countrycode, c.duration as duration        
+        from Calls c join getCountryCode gcc
+            on c.callee_id = gcc.id
+    ),
+    getSumDuration as(
+    select countrycode, avg(duration) as cavg
+        from getCallDuration
+        group by countrycode
+    )
+    select c.name as  country
+     from getSumDuration g join Country c
+        on g.countrycode = c.country_code
+        where g.cavg > (select avg(duration) from getCallDuration)
+    

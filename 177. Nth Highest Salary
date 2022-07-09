@@ -1,0 +1,10 @@
+    with cte as(
+        select count(distinct rank()over(order by salary desc)) as rnk from Employee
+        )
+    select case
+            when (select rnk from cte) < 2 then null
+            else (select salary from Employee 
+                               order by salary desc
+                               offset 1 row
+                               fetch next 1 row only)
+            end as getNthHighestSalary(2)

@@ -1,0 +1,14 @@
+with cte as(
+    select customer_id,product_id, count(product_id) as countProduct
+        from Orders
+        group by customer_id, product_id
+        
+    ),
+    getrank as(
+        select customer_id, product_id, dense_rank()over(partition by customer_id order by countProduct desc) as rnk    
+        from cte
+    )
+ select g.customer_id, g.product_id, p.product_name
+    from getrank g join Products p
+        on g.product_id = p.product_id
+    where rnk = 1

@@ -1,0 +1,27 @@
+with findMax as(
+    select exam_id, student_id, rank()over(
+    partition by exam_id order by score desc) as rnk
+    from Exam
+    ),
+    findMin as(
+    select exam_id, student_id, rank()over(
+    partition by exam_id order by score asc) as rnk
+    from Exam
+    ),
+    findMaxMin as(
+    select student_id 
+        from findMax
+        where rnk = 1
+    union
+    select student_id 
+        from findMin
+        where rnk = 1
+    ),
+    findQuietId as(
+        select distinct student_id as id
+            from Exam 
+            where student_id not in (select student_id from findMaxMin)
+    )
+ select a.id as student_id, b.student_name
+       from findQuietId a join Student b
+           on a.id = b.student_id

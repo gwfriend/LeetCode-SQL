@@ -1,0 +1,24 @@
+with sort as(
+    select case
+            when caller_id > recipient_id then recipient_id
+             else caller_id
+        end as caller_id,
+        case 
+            when caller_id > recipient_id then caller_id
+            else recipient_id
+            end as recipient_id,
+        left(call_time,10) as ct
+from Calls
+            )
+select caller_id, recipient_id
+    from sort
+    group by ct, caller_id, recipient_id
+    having count(recipient_id)>=2 
+union
+select caller_id, recipient_id
+    from sort
+    group by ct 
+    having count(ct) = 1
+    
+
+        
